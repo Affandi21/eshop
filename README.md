@@ -30,4 +30,46 @@ Setelah meninjau kembali kode saya, ada beberapa hal yang dapat ditingkatkan di 
 * **Error Handling**: Aplikasi saat ini akan menampilkan *Whitelabel Error Page* jika terjadi kesalahan. Seharusnya saya menambahkan *Global Exception Handler* (menggunakan `@ControllerAdvice`) untuk menangani error secara lebih elegan dan informatif bagi pengguna.
 * **Unit Testing**: Kode saat ini masih minim pengujian. Menambahkan unit test untuk setiap layer (terutama Service dan Repository) sangat penting untuk memastikan fungsionalitas tetap terjaga saat ada perubahan di masa depan.
 
+
+# Reflection 2
+
+## 1. Unit Testing & Code Coverage
+
+Setelah menulis unit test, saya merasa lebih percaya diri terhadap kode yang saya buat karena setiap perubahan kecil dapat langsung diverifikasi secara otomatis. Unit test membantu memastikan bahwa functionality yang sudah berjalan dengan baik tidak rusak ketika dilakukan perubahan atau penambahan fitur.
+
+Tidak ada jumlah pasti mengenai berapa banyak unit test yang harus dibuat dalam satu class. Namun, unit test sebaiknya mencakup seluruh logic paths, termasuk:
+- Positive scenarios (valid input),
+- Negative scenarios (invalid input),
+- Edge cases.
+
+Untuk mengevaluasi kecukupan unit test, kita dapat menggunakan **Code Coverage**, yaitu metrik yang mengukur persentase code lines atau logic branches yang dieksekusi oleh unit test. Semakin tinggi nilai code coverage, semakin banyak bagian code yang telah diuji.
+
+Meskipun mencapai **100% code coverage** merupakan pencapaian yang baik, hal tersebut **tidak menjamin kode bebas dari bug**. Code coverage hanya memastikan bahwa code telah dieksekusi oleh test, bukan bahwa seluruh business logic telah diverifikasi dengan benar. Bug tetap dapat muncul jika:
+- Test logic itu sendiri keliru,
+- Ada real-world scenarios yang belum terpikirkan oleh developer,
+- Assertion pada test kurang spesifik terhadap expected behavior.
+
+Oleh karena itu, code coverage sebaiknya digunakan sebagai supporting metric, bukan satu-satunya indikator kualitas test.
+
+
+## 2. Functional Testing Clean Code Issues
+
+Jika saya membuat functional test suite baru dengan menyalin prosedur setup dan instance variables yang sama dari test class sebelumnya, maka kualitas code akan menurun karena melanggar prinsip **DRY (Don't Repeat Yourself)**.
+
+Masalah utama yang muncul adalah **Code Duplication**, di mana code yang identik (seperti konfigurasi `baseUrl` dan anotasi `@LocalServerPort`) tersebar di banyak test classes. Jika terjadi perubahan konfigurasi di masa depan, saya harus mengubahnya di setiap file secara manual, yang akan:
+- Menurunkan maintainability,
+- Meningkatkan risiko human error,
+- Menyebabkan rigidity pada struktur code.
+
+Untuk meningkatkan kualitas code, solusi yang disarankan adalah melakukan **refactoring** dengan membuat sebuah **Base Functional Test Class**.  
+Base class ini akan menampung:
+- Common setup procedures,
+- Shared instance variables.
+
+Dengan pendekatan ini, test class baru (seperti `ProductListCountFunctionalTest`) cukup menggunakan **inheritance** dari base class tersebut. Hasilnya, code menjadi:
+- Cleaner,
+- More modular,
+- Easier to maintain dan scalable di masa depan.
+
 ---
+
