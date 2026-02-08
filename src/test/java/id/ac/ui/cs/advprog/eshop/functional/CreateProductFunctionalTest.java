@@ -33,6 +33,7 @@ class CreateProductFunctionalTest {
 
     @Test
     void createProduct_isSuccessful(ChromeDriver driver) throws Exception {
+        //simulate user interactions
         // 1. Buka halaman List Produk
         driver.get(baseUrl);
 
