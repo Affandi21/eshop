@@ -1,3 +1,8 @@
+val seleniumJavaVersion = "4.14.1"
+val seleniumJupiterVersion = "5.0.1"
+val webdrivermanagerVersion = "5.6.3"
+val junitJupiterVersion = "5.9.1"
+
 plugins {
     java
     id("org.springframework.boot") version "3.5.10"
@@ -32,9 +37,28 @@ dependencies {
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.seleniumhq.selenium:selenium-java:$seleniumJavaVersion")
+    testImplementation("io.github.bonigarcia:webdrivermanager:$webdrivermanagerVersion")
+    testImplementation("io.github.bonigarcia:selenium-jupiter:$seleniumJupiterVersion")
+    testImplementation("org.junit.jupiter:junit-jupiter:${junitJupiterVersion}")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
+tasks.register<Test>("unitTest") {
+    description = "Runs unit tests."
+    group = "verification"
 
-tasks.withType<Test> {
+    filter {
+        excludeTestsMatching("*FunctionalTest")
+    }
+}
+tasks.register<Test>("functionalTest") {
+    description = "Runs functional tests."
+    group = "verification"
+
+    filter {
+        includeTestsMatching("*FunctionalTest")
+    }
+}
+tasks.withType<Test>().configureEach {
     useJUnitPlatform()
 }
