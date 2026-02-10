@@ -105,4 +105,89 @@ class ProductRepositoryTest {
         Product result = productRepository.findById("id-asli");
         assertNotNull(result);
     }
+
+    @Test
+    void testEditProductNegative() {
+        Product product = new Product();
+        product.setProductId("id-asli");
+        product.setProductName("Barang Asli");
+        product.setProductQuantity(10);
+        productRepository.create(product);
+
+        // Mencoba update produk dengan ID yang berbeda (tidak terdaftar)
+        Product fakeProduct = new Product();
+        fakeProduct.setProductId("id-palsu");
+        fakeProduct.setProductName("Barang Palsu");
+        fakeProduct.setProductQuantity(20);
+        productRepository.update(fakeProduct);
+
+        // Pastikan data asli tidak berubah
+        Product result = productRepository.findById("id-asli");
+        assertNotNull(result);
+        assertEquals("Barang Asli", result.getProductName());
+        assertNotEquals("Barang Palsu", result.getProductName());
+    }
+
+    @Test
+    void testCreateWithSpecialCharactersAndZeroQuantity() {
+        Product product = new Product();
+        product.setProductId("special-id-123");
+        product.setProductName("Sampo @#$%^&* (Limited Edition)");
+        product.setProductQuantity(0); // Nilai batas (kosong)
+        productRepository.create(product);
+
+        Product savedProduct = productRepository.findById("special-id-123");
+        assertEquals("Sampo @#$%^&* (Limited Edition)", savedProduct.getProductName());
+        assertEquals(0, savedProduct.getProductQuantity());
+    }
+
+    @Test
+    void testIntegritasDataAfterUpdate() {
+        Product p1 = new Product();
+        p1.setProductId("id-1");
+        p1.setProductName("Produk 1");
+        productRepository.create(p1);
+
+        Product p2 = new Product();
+        p2.setProductId("id-2");
+        p2.setProductName("Produk 2");
+        productRepository.create(p2);
+
+        // Update Produk 1
+        p1.setProductName("Produk 1 Updated");
+        productRepository.update(p1);
+
+        Iterator<Product> iterator = productRepository.findAll();
+        int count = 0;
+        while (iterator.hasNext()) {
+            iterator.next();
+            count++;
+        }
+        // Pastikan jumlah produk tetap 2 (tidak bertambah karena update)
+        assertEquals(2, count);
+    }
+
+    @Test
+    void testDeleteTwiceAndFind() {
+        Product product = new Product();
+        product.setProductId("id-hapus");
+        productRepository.create(product);
+
+        // Penghapusan pertama
+        productRepository.delete("id-hapus");
+        assertNull(productRepository.findById("id-hapus"));
+
+        // Penghapusan kedua (Id yang sama)
+        // Seharusnya tidak melempar eksepsi dan hasil tetap null
+        productRepository.delete("id-hapus");
+        assertNull(productRepository.findById("id-hapus"));
+    }
+
+    @Test
+    void testFindByIdIfIdIsEmptyOrNull() {
+        assertNull(productRepository.findById(""));
+        assertNull(productRepository.findById(null));
+    }
+
+
 }

@@ -7,17 +7,20 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.test.annotation.DirtiesContext;
 
-import java.util.List;
+import java.time.Duration;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ExtendWith(SeleniumJupiter.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class CreateProductFunctionalTest {
 
     @LocalServerPort
@@ -27,45 +30,52 @@ class CreateProductFunctionalTest {
 
     @BeforeEach
     void setupTest() {
-        // Kita langsung menuju ke halaman list produk
-        baseUrl = String.format("http://localhost:%d/product/list", serverPort);
+        baseUrl = String.format("http://localhost:%d", serverPort);
     }
 
     @Test
-    void createProduct_isSuccessful(ChromeDriver driver) throws Exception {
-        //simulate user interactions
-        // 1. Buka halaman List Produk
-        driver.get(baseUrl);
+    void createProduct_isSuccessful(ChromeDriver driver) {
 
-        // 2. Klik tombol "Create Product" (dari file ProductList.html)
-        WebElement createButton = driver.findElement(By.linkText("Create Product"));
+        // Explicit wait untuk menghindari flaky test
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+
+        // 1. Buka halaman Product List
+        driver.get(baseUrl + "/product/list");
+
+        // 2. Tunggu dan klik tombol Create Product
+        WebElement createButton = wait.until(
+                ExpectedConditions.elementToBeClickable(By.linkText("Create Product"))
+        );
         createButton.click();
 
-        // 3. Isi form Create Product (sesuai ID di CreateProduct.html)
-        String name = "Sampo Cap Bambang";
-        int quantity = 100;
-
-        WebElement nameInput = driver.findElement(By.id("nameInput"));
-        nameInput.clear();
-        nameInput.sendKeys(name);
+        // 3. Tunggu form Create Product muncul
+        WebElement nameInput = wait.until(
+                ExpectedConditions.visibilityOfElementLocated(By.id("nameInput"))
+        );
 
         WebElement quantityInput = driver.findElement(By.id("quantityInput"));
-        quantityInput.clear();
+
+        // Gunakan data unik supaya tidak bentrok antar test
+        String name = "Sampo " + System.currentTimeMillis();
+        int quantity = 100;
+
+        nameInput.sendKeys(name);
         quantityInput.sendKeys(String.valueOf(quantity));
 
-        // 4. Klik tombol Submit
-        WebElement submitButton = driver.findElement(By.cssSelector("button[type='submit']"));
-        submitButton.click();
+        // 4. Submit form
+        driver.findElement(By.cssSelector("button[type='submit']")).click();
 
-        // 5. Verifikasi: Browser akan redirect kembali ke /product/list
-        // Kita periksa apakah data yang kita masukkan muncul di tabel
-        String currentUrl = driver.getCurrentUrl();
-        assertTrue(currentUrl.contains("/product/list"));
+        // 5. Tunggu redirect kembali ke product list
+        wait.until(ExpectedConditions.urlContains("/product/list"));
 
-        // Mengambil teks dari baris terakhir di tabel untuk verifikasi
-        WebElement table = driver.findElement(By.className("table"));
+        // 6. Tunggu tabel muncul
+        WebElement table = wait.until(
+                ExpectedConditions.visibilityOfElementLocated(By.className("table"))
+        );
+
         String tableContent = table.getText();
 
+        // 7. Verifikasi isi tabel
         assertTrue(tableContent.contains(name));
         assertTrue(tableContent.contains(String.valueOf(quantity)));
     }
