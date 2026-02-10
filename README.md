@@ -73,3 +73,16 @@ Dengan pendekatan ini, test class baru (seperti `ProductListCountFunctionalTest`
 
 ---
 
+# Reflection 3
+
+## 1. Peningkatan Pengujian dan Ketahanan Kode
+
+Dalam tahap pengembangan lanjutan aplikasi ini, saya berfokus pada peningkatan kualitas kode melalui penambahan unit test yang lebih menyeluruh. Pengujian tidak hanya dilakukan untuk memastikan fitur berjalan sesuai kebutuhan, tetapi juga untuk menjaga ketahanan kode (*code resilience*) terhadap berbagai kondisi input. Salah satu implementasi yang saya lakukan adalah memastikan setiap produk memiliki ID unik menggunakan UUID yang dihasilkan secara otomatis saat data disimpan ke repositori. Pendekatan ini bertujuan untuk mencegah terjadinya duplikasi data dan menjaga integritas penyimpanan informasi produk.
+
+Selain itu, saya menambahkan pengujian terhadap kondisi batas (*edge cases*), seperti kuantitas produk bernilai nol dan penggunaan nama produk dengan karakter khusus atau panjang tertentu. Pengujian ini membantu memastikan bahwa aplikasi tetap stabil dan tidak mengalami kegagalan ketika menerima input yang tidak umum. Dengan menambahkan variasi skenario pengujian, cakupan pengujian (*code coverage*) menjadi lebih luas sehingga meningkatkan tingkat kepercayaan terhadap konsistensi logika bisnis. Melalui proses ini, saya memahami bahwa unit test tidak hanya berfungsi sebagai alat verifikasi, tetapi juga sebagai bentuk dokumentasi perilaku sistem yang memudahkan proses pemeliharaan kode di masa depan.
+
+## 2. Peningkatan Antarmuka Pengguna dan Pengalaman Pengguna
+
+Selain melakukan peningkatan pada kualitas kode, saya juga mengembangkan antarmuka pengguna untuk meningkatkan pengalaman penggunaan aplikasi. Saya menerapkan desain bertema **Premium White** dengan memanfaatkan framework **Bootstrap 5** serta ikon dari **Font Awesome** untuk menciptakan tampilan yang lebih modern dan terstruktur. Penggunaan kartu (*cards*) pada formulir membantu memisahkan elemen visual sehingga informasi lebih mudah dipahami oleh pengguna.
+
+Desain antarmuka ini bertujuan untuk menciptakan hierarki visual yang jelas, sehingga pengguna dapat membedakan fungsi **Create**, **Edit**, dan **Delete** secara lebih intuitif. Selain aspek tampilan, saya juga memastikan bahwa antarmuka bersifat responsif sehingga aplikasi tetap nyaman digunakan pada berbagai ukuran perangkat. Melalui pengembangan ini, saya menyadari bahwa kualitas perangkat lunak tidak hanya ditentukan oleh stabilitas logika program, tetapi juga oleh kemudahan interaksi pengguna terhadap sistem. Secara keseluruhan, proses ini memberikan pemahaman bahwa pengujian yang baik dan desain antarmuka yang terstruktur merupakan dua aspek yang saling melengkapi dalam menghasilkan aplikasi yang andal dan mudah digunakan.
