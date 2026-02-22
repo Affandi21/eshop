@@ -50,7 +50,7 @@ class ProductControllerTest {
         String view = controller.createProductPost(product, model);
 
         verify(service).create(product);
-        assertEquals("redirect:list", view);
+        assertEquals("redirect:/product/list", view);
     }
 
     @Test
@@ -81,7 +81,7 @@ class ProductControllerTest {
         String view = controller.editProductPost(product);
 
         verify(service).update(product);
-        assertEquals("redirect:list", view);
+        assertEquals("redirect:/product/list", view);
     }
 
     @Test
