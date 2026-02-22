@@ -17,13 +17,9 @@ class ProductServiceImplTest {
     private ProductServiceImpl service;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         repository = mock(ProductRepository.class);
-        service = new ProductServiceImpl();
-
-        Field field = ProductServiceImpl.class.getDeclaredField("productRepository");
-        field.setAccessible(true);
-        field.set(service, repository);
+        service = new ProductServiceImpl(repository);
     }
 
     @Test

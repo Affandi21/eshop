@@ -19,15 +19,10 @@ class ProductControllerTest {
     private Model model;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         service = mock(ProductService.class);
-        controller = new ProductController();
+        controller = new ProductController(service); // ✅ no reflection
         model = mock(Model.class);
-
-        // 🔥 inject private field
-        Field field = ProductController.class.getDeclaredField("service");
-        field.setAccessible(true);
-        field.set(controller, service);
     }
 
     @Test
