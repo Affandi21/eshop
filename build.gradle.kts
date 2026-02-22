@@ -93,8 +93,8 @@ tasks.jacocoTestReport {
 
 sonar {
     properties {
-        property("sonar.projectKey", "affandishafwan_eshop")
-        property("sonar.organization", "affandishafwan")
+        property("sonar.projectKey", "Affandi21_eshop")
+        property("sonar.organization", "affandi21")
         property("sonar.host.url", "https://sonarcloud.io")
 
         property(
