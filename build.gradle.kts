@@ -101,6 +101,11 @@ sonar {
             "sonar.coverage.jacoco.xmlReportPaths",
             "build/reports/jacoco/test/jacocoTestReport.xml"
         )
+
+        property(
+            "sonar.junit.reportPaths",
+            "build/test-results/test"
+        )
     }
 }
 
