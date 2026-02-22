@@ -189,5 +189,38 @@ class ProductRepositoryTest {
         assertNull(productRepository.findById(null));
     }
 
+    @Test
+    void testCreateWithoutId_shouldGenerateId() {
+        Product product = new Product();
+        product.setProductName("Tanpa ID");
+
+        productRepository.create(product);
+
+        assertNotNull(product.getProductId());
+    }
+
+    @Test
+    void testFindByIdNotFound() {
+        Product result = productRepository.findById("tidak-ada");
+        assertNull(result);
+    }
+
+    @Test
+    void testFindById_notMatchingId() {
+        Product product = new Product();
+        product.setProductId("1");
+        productRepository.create(product);
+
+        Product result = productRepository.findById("2");
+
+        assertNull(result);
+    }
+
+    @Test
+    void testFindById_emptyList() {
+        Product result = productRepository.findById("1");
+        assertNull(result);
+    }
+
 
 }
