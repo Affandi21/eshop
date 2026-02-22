@@ -106,6 +106,7 @@ sonar {
             "sonar.junit.reportPaths",
             "build/test-results/test"
         )
+        property("sonar.junit.reportPaths", "build/test-results/test")
     }
 }
 
