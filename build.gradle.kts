@@ -93,16 +93,14 @@ tasks.jacocoTestReport {
 
 sonar {
     properties {
-        property("sonar.projectKey", "affandi21_eshop")
-        property("sonar.organization", "affandi21")
+        property("sonar.projectKey", "affandishafwan_eshop")
+        property("sonar.organization", "affandishafwan")
         property("sonar.host.url", "https://sonarcloud.io")
 
         property(
             "sonar.coverage.jacoco.xmlReportPaths",
             "build/reports/jacoco/test/jacocoTestReport.xml"
         )
-
-        property("sonar.gradle.skipCompile", "true")
     }
 }
 
