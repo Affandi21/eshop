@@ -86,3 +86,60 @@ Selain itu, saya menambahkan pengujian terhadap kondisi batas (*edge cases*), se
 Selain melakukan peningkatan pada kualitas kode, saya juga mengembangkan antarmuka pengguna untuk meningkatkan pengalaman penggunaan aplikasi. Saya menerapkan desain bertema **Premium White** dengan memanfaatkan framework **Bootstrap 5** serta ikon dari **Font Awesome** untuk menciptakan tampilan yang lebih modern dan terstruktur. Penggunaan kartu (*cards*) pada formulir membantu memisahkan elemen visual sehingga informasi lebih mudah dipahami oleh pengguna.
 
 Desain antarmuka ini bertujuan untuk menciptakan hierarki visual yang jelas, sehingga pengguna dapat membedakan fungsi **Create**, **Edit**, dan **Delete** secara lebih intuitif. Selain aspek tampilan, saya juga memastikan bahwa antarmuka bersifat responsif sehingga aplikasi tetap nyaman digunakan pada berbagai ukuran perangkat. Melalui pengembangan ini, saya menyadari bahwa kualitas perangkat lunak tidak hanya ditentukan oleh stabilitas logika program, tetapi juga oleh kemudahan interaksi pengguna terhadap sistem. Secara keseluruhan, proses ini memberikan pemahaman bahwa pengujian yang baik dan desain antarmuka yang terstruktur merupakan dua aspek yang saling melengkapi dalam menghasilkan aplikasi yang andal dan mudah digunakan.
+
+
+---
+
+
+#  Reflection - Module 2 CI/CD
+
+## 1. Code Quality Issues dan Strategi Perbaikannya
+
+Selama mengerjakan modul ini, terdapat beberapa *code quality issues* yang terdeteksi melalui SonarCloud, dan telah diperbaiki untuk meningkatkan kualitas kode.
+
+Salah satu masalah utama adalah penggunaan **field injection (`@Autowired`)** pada controller dan service. Pendekatan ini dianggap kurang baik karena membuat dependency kurang jelas dan menyulitkan pengujian. Untuk mengatasinya, dilakukan refactor menjadi **constructor injection**, sehingga dependency lebih eksplisit, immutable, dan lebih mudah untuk di-*mock* saat testing.
+
+Selain itu, terdapat penggunaan **reflection pada unit test** untuk mengisi field private. Cara ini tidak direkomendasikan karena menurunkan maintainability dan membuat test lebih kompleks. Solusinya adalah dengan menyesuaikan class agar menggunakan constructor injection, sehingga dependency bisa langsung diberikan saat pembuatan object tanpa reflection.
+
+Masalah lain yang ditemukan adalah adanya **duplikasi string**, seperti `"redirect:/product/list"` yang digunakan di beberapa tempat. Hal ini diperbaiki dengan menjaga konsistensi penulisan dan menghindari duplikasi yang tidak perlu.
+
+Selain itu, terdapat beberapa *minor issues* seperti:
+
+* Test yang tidak memiliki assertion
+* Import yang tidak digunakan
+* Penggunaan `throws Exception` yang tidak diperlukan
+
+Semua masalah tersebut diperbaiki dengan membersihkan kode dan memastikan setiap test memiliki assertion yang jelas.
+
+Melalui perbaikan ini, nilai **Maintainability di SonarCloud meningkat hingga mencapai grade A**, dan *Quality Gate* berhasil **PASSED**.
+
+---
+
+## 2. Analisis Implementasi CI/CD
+
+Implementasi yang dilakukan sudah memenuhi konsep **Continuous Integration (CI)**. Setiap perubahan yang di-*push* ke repository akan secara otomatis menjalankan GitHub Actions untuk menjalankan unit test dan analisis kualitas kode menggunakan SonarCloud. Hal ini memastikan bahwa setiap perubahan langsung divalidasi dan kesalahan dapat terdeteksi lebih awal.
+
+Selain itu, implementasi ini juga memenuhi konsep **Continuous Deployment (CD)**. Aplikasi secara otomatis di-*deploy* ke platform PaaS (Koyeb) setiap kali terdapat perubahan pada branch utama. Dengan demikian, proses deployment tidak perlu dilakukan secara manual dan aplikasi selalu berada dalam kondisi terbaru.
+
+Pipeline yang dibuat juga sudah mencakup beberapa tahap penting, yaitu:
+
+* **Testing** (unit & functional test)
+* **Code quality analysis (SonarCloud)**
+* **Deployment ke PaaS**
+
+Integrasi ketiga tahap ini menunjukkan bahwa pipeline sudah berjalan secara otomatis dan berkelanjutan, sesuai dengan prinsip CI/CD.
+
+---
+
+## Kesimpulan
+
+Secara keseluruhan, implementasi CI/CD pada proyek ini telah berhasil:
+
+* Menjalankan proses integrasi secara otomatis (CI)
+* Melakukan analisis kualitas kode menggunakan SonarCloud
+* Melakukan deployment otomatis ke PaaS (CD)
+
+Dengan pipeline ini, kualitas kode lebih terjaga, proses development menjadi lebih efisien, dan aplikasi dapat terus di-*deploy* secara konsisten.
+
+---
+
