@@ -1,7 +1,7 @@
 package id.ac.ui.cs.advprog.eshop.controller;
 
 import id.ac.ui.cs.advprog.eshop.model.Car;
-import id.ac.ui.cs.advprog.eshop.service.CarServiceImpl;
+import id.ac.ui.cs.advprog.eshop.service.CarService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.ui.Model;
@@ -13,14 +13,14 @@ import static org.mockito.Mockito.*;
 
 class CarControllerTest {
 
-    private CarServiceImpl carService;
+    private CarService carService;
     private CarController controller;
     private Model model;
 
     @BeforeEach
     void setUp() {
-        carService = mock(CarServiceImpl.class);
-        controller = new CarController(null, carService); // karena extend ProductController
+        carService = mock(CarService.class);
+        controller = new CarController(carService);
         model = mock(Model.class);
     }
 

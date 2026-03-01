@@ -15,8 +15,7 @@ class CarServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        carService = new CarServiceImpl();
-        carService.carRepository = new CarRepository(); // inject manual
+        carService = new CarServiceImpl(new CarRepository());
     }
 
     @Test
