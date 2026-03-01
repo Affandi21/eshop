@@ -81,4 +81,9 @@ class CarServiceImplTest {
 
         assertNull(carService.findById(created.getCarId()));
     }
+
+    @Test
+    void testFindByIdNotFound() {
+        assertNull(carService.findById("not-exist"));
+    }
 }
