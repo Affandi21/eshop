@@ -13,7 +13,7 @@ import java.util.List;
 public class CarServiceImpl implements CarService{
 
     @Autowired
-    private CarRepository carRepository;
+    CarRepository carRepository;
 
     @Override
     public Car create(Car car) {
