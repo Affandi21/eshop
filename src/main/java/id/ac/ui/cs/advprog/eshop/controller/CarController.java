@@ -13,7 +13,8 @@ import java.util.List;
 @RequestMapping("/car")
 public class CarController {
 
-    private final CarService carService;
+    @Autowired
+    private CarService carService;
 
     @Autowired
     public CarController(CarService carService) {
