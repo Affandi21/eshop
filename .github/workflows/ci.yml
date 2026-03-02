@@ -26,4 +26,15 @@ jobs:
       - name: Run unit tests
         run: ./gradlew test
 
-        #deploy
+  deploy:
+    name: Deploy (tracking only)
+    runs-on: ubuntu-22.04
+    needs: test
+
+    environment:
+      name: production
+      url: https://cool-horse-affandishafwan-2e034e85.koyeb.app/
+
+    steps:
+      - name: Dummy deploy
+        run: echo "Already deployed on Koyeb"
