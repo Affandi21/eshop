@@ -25,3 +25,5 @@ jobs:
 
       - name: Run unit tests
         run: ./gradlew test
+
+        #deploy
