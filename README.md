@@ -143,3 +143,105 @@ Dengan pipeline ini, kualitas kode lebih terjaga, proses development menjadi leb
 
 ---
 
+# Reflection: SOLID Principles
+
+## 1. Single Responsibility Principle (SRP)
+
+Saya telah mengimplementasikan SRP setelah melakukan refactoring pada kode awal. SRP menyatakan bahwa sebuah class seharusnya hanya memiliki satu alasan untuk berubah, yang berarti class tersebut hanya menangani satu tanggung jawab utama.
+
+Pada implementasi sebelumnya, kode saya belum mematuhi SRP karena `CarController` digabungkan di dalam file `ProductController.java`. Hal ini menyebabkan satu file memiliki dua tanggung jawab sekaligus, yaitu mengelola HTTP request untuk entitas product dan juga car. Kondisi ini cukup berbahaya karena setiap perubahan kecil pada salah satu entitas bisa berdampak ke bagian lain yang sebenarnya tidak berkaitan.
+
+Untuk memperbaiki hal tersebut, saya memisahkan `CarController` ke dalam file tersendiri (`CarController.java`). Setelah dipisah:
+- `ProductController` hanya menangani seluruh alur terkait product
+- `CarController` hanya fokus menangani fitur yang berhubungan dengan car
+
+Dengan perubahan ini, setiap controller sekarang benar-benar memiliki satu tanggung jawab yang jelas. Dampaknya, kode menjadi lebih mudah dibaca, lebih terstruktur, dan perubahan di satu bagian tidak lagi berisiko merusak bagian lain.
+
+---
+
+## 2. Open-Closed Principle (OCP)
+
+Saya juga telah memodifikasi kode agar lebih sesuai dengan prinsip OCP, terutama pada bagian repository.
+
+OCP menyatakan bahwa suatu entitas software harus terbuka untuk pengembangan, tetapi tertutup untuk modifikasi. Artinya, kita sebaiknya bisa menambahkan fitur baru tanpa perlu mengubah kode yang sudah ada.
+
+Sebelumnya, implementasi method `update` pada `CarRepository` masih kurang optimal karena melakukan update atribut satu per satu menggunakan setter. Hal ini menjadi masalah karena jika ada penambahan atribut baru pada model `Car`, maka saya harus kembali membuka dan memodifikasi kode repository tersebut.
+
+Untuk mengatasi hal ini, saya mengubah pendekatan update menjadi langsung mengganti objek lama dengan objek baru di dalam list. Dengan cara ini, repository tidak lagi perlu mengetahui detail atribut dari `Car`. Jika di masa depan ada penambahan field baru, repository tidak perlu diubah sama sekali.
+
+Perubahan ini membuat kode menjadi lebih fleksibel dan sesuai dengan prinsip OCP karena behavior dapat diperluas tanpa harus mengubah implementasi yang sudah ada.
+
+---
+
+## 3. Liskov Substitution Principle (LSP)
+
+Saya juga melakukan perbaikan untuk memenuhi prinsip LSP.
+
+LSP menyatakan bahwa subclass harus bisa menggantikan superclass tanpa mengubah perilaku program. Dengan kata lain, hubungan inheritance harus benar-benar merepresentasikan relasi yang valid secara konsep.
+
+Sebelumnya, `CarController` dibuat dengan cara mewarisi (`extends`) `ProductController`. Ini sebenarnya tidak tepat karena `CarController` bukanlah bentuk khusus dari `ProductController`. Akibatnya, terjadi efek samping pada routing, di mana endpoint milik product bisa ikut terpengaruh oleh mapping dari car.
+
+Contohnya, method yang seharusnya meng-handle product malah ikut menggunakan base path `/car`, sehingga membuat routing menjadi tidak konsisten dan berpotensi menimbulkan bug.
+
+Untuk memperbaiki hal ini, saya menghapus inheritance tersebut dan membuat `CarController` berdiri sendiri sebagai controller yang independen. Dengan begitu, tidak ada lagi behavior yang “terwarisi secara tidak relevan”, dan sistem menjadi lebih konsisten.
+
+---
+
+## 4. Interface Segregation Principle (ISP)
+
+Untuk prinsip ISP, struktur kode sebenarnya sudah cukup baik sejak awal dan tidak memerlukan perubahan besar.
+
+ISP menyatakan bahwa sebuah class tidak boleh dipaksa untuk mengimplementasikan method yang tidak dibutuhkan. Oleh karena itu, interface sebaiknya dibuat kecil dan spesifik sesuai kebutuhan.
+
+Dalam proyek ini, sudah ada pemisahan interface seperti `ProductService` dan `CarService`. Hal ini jauh lebih baik dibandingkan membuat satu interface besar yang berisi semua method dari berbagai entitas.
+
+Dengan pemisahan ini:
+- `CarController` hanya berinteraksi dengan method yang relevan untuk car
+- Tidak ada method yang “terpaksa diimplementasikan” tapi sebenarnya tidak digunakan
+
+Hal ini membuat desain lebih bersih dan lebih mudah dikembangkan ke depannya.
+
+---
+
+## 5. Dependency Inversion Principle (DIP)
+
+Saya juga telah menerapkan prinsip DIP pada kode.
+
+DIP menyatakan bahwa modul tingkat tinggi tidak boleh bergantung langsung pada modul tingkat rendah, melainkan keduanya harus bergantung pada abstraksi.
+
+Sebelumnya, `CarController` langsung bergantung pada `CarServiceImpl`, yang merupakan implementasi konkret. Ini menyebabkan coupling yang tinggi karena controller jadi tahu detail implementasi service.
+
+Untuk memperbaiki hal ini, saya mengubah dependency menjadi menggunakan interface, yaitu `CarService`. Dengan perubahan ini, controller hanya bergantung pada kontrak (abstraction), bukan pada implementasi.
+
+Dampaknya:
+- Controller menjadi lebih fleksibel
+- Implementasi service bisa diganti tanpa mengubah controller
+- Sangat memudahkan proses testing karena bisa menggunakan mock object
+
+---
+
+## Advantages of Applying SOLID Principles
+
+Menerapkan SOLID memberikan banyak keuntungan yang terasa langsung dalam pengembangan proyek ini.
+
+Yang paling terasa adalah peningkatan maintainability. Dengan SRP, setiap bagian kode memiliki tanggung jawab yang jelas, sehingga ketika ada perubahan atau bug, saya bisa langsung fokus ke satu file tanpa perlu khawatir merusak bagian lain.
+
+Selain itu, fleksibilitas sistem juga meningkat. Contohnya pada OCP, perubahan model tidak lagi memaksa saya untuk mengubah repository. Hal ini membuat sistem lebih siap untuk berkembang tanpa harus sering melakukan refactoring besar.
+
+Dari sisi testing, penerapan DIP sangat membantu. Saya bisa melakukan unit testing dengan lebih mudah karena dependency bisa diganti dengan mock. Ini membuat test lebih cepat dan tidak bergantung pada implementasi nyata.
+
+Secara keseluruhan, struktur kode menjadi jauh lebih rapi, terorganisir, dan mudah dipahami, terutama ketika proyek mulai berkembang menjadi lebih besar.
+
+---
+
+## Disadvantages of Not Applying SOLID Principles
+
+Jika prinsip SOLID tidak diterapkan, maka akan muncul banyak masalah dalam jangka panjang.
+
+Salah satu yang paling terasa adalah code menjadi fragile. Sebelum menerapkan LSP, inheritance yang tidak tepat menyebabkan routing menjadi kacau. Perubahan kecil bisa berdampak besar ke bagian lain yang tidak seharusnya terpengaruh.
+
+Selain itu, tanpa DIP, coupling antar class menjadi sangat tinggi. Perubahan pada satu bagian bisa memaksa perubahan di banyak bagian lain. Hal ini membuat development menjadi lambat dan berisiko.
+
+Tanpa SRP, file seperti controller bisa menjadi sangat besar dan sulit dikelola. Jika proyek terus berkembang, hal ini bisa berubah menjadi spaghetti code yang sulit dipahami dan sulit dikerjakan secara tim.
+
+Secara keseluruhan, tidak menerapkan SOLID akan membuat sistem menjadi kaku, sulit dikembangkan, dan rawan error.
