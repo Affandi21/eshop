@@ -245,3 +245,6 @@ Selain itu, tanpa DIP, coupling antar class menjadi sangat tinggi. Perubahan pad
 Tanpa SRP, file seperti controller bisa menjadi sangat besar dan sulit dikelola. Jika proyek terus berkembang, hal ini bisa berubah menjadi spaghetti code yang sulit dipahami dan sulit dikerjakan secara tim.
 
 Secara keseluruhan, tidak menerapkan SOLID akan membuat sistem menjadi kaku, sulit dikembangkan, dan rawan error.
+
+
+---
