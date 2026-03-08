@@ -248,3 +248,58 @@ Secara keseluruhan, tidak menerapkan SOLID akan membuat sistem menjadi kaku, sul
 
 
 ---
+
+
+# Reflection Module 4
+
+## 1. Reflection on the Use of Test Driven Development (TDD)
+
+Dalam tutorial ini saya mengikuti alur **Test Driven Development (TDD)** yang terdiri dari tiga tahap utama, yaitu **RED, GREEN, dan REFACTOR**. Pendekatan ini mengharuskan saya untuk menulis unit test terlebih dahulu sebelum mengimplementasikan logika program.
+
+Pada tahap **RED**, saya membuat unit test untuk beberapa komponen utama dalam sistem Order, yaitu **Order model**, **OrderRepository**, dan **OrderServiceImpl**. Contohnya, pada `OrderTest` saya membuat test untuk berbagai kondisi seperti pembuatan order dengan produk kosong, pembuatan order dengan status default, penggunaan status yang valid maupun tidak valid, serta perubahan status order menggunakan method `setStatus`. Pada tahap ini, sebagian besar test memang gagal karena implementasi kode belum dibuat. Hal ini membantu saya memahami dengan lebih jelas perilaku sistem yang diharapkan sebelum menulis implementasi.
+
+Selanjutnya pada tahap **GREEN**, saya mulai mengimplementasikan kode agar seluruh test dapat berjalan dengan sukses. Misalnya, saya mengimplementasikan class `OrderRepository` dengan method seperti `save`, `findById`, dan `findAllByAuthor` untuk mengelola data order yang disimpan dalam sebuah list. Selain itu, saya juga mengimplementasikan class `OrderServiceImpl` yang berfungsi sebagai service layer untuk menangani logika bisnis seperti membuat order baru (`createOrder`), memperbarui status order (`updateStatus`), mencari order berdasarkan ID (`findById`), dan mencari order berdasarkan author (`findAllByAuthor`). Pada tahap ini, setiap kali saya menambahkan implementasi method, saya menjalankan kembali unit test untuk memastikan bahwa kode yang dibuat sudah memenuhi perilaku yang diharapkan oleh test.
+
+Pada tahap **REFACTOR**, saya melakukan perbaikan struktur kode tanpa mengubah perilaku sistem. Salah satu refactoring yang dilakukan adalah mengganti penggunaan string status secara langsung dengan menggunakan enum `OrderStatus`. Sebelumnya, validasi status dilakukan menggunakan array string yang berisi daftar status yang valid. Setelah refactoring, validasi status dilakukan menggunakan method `OrderStatus.contains()`. Perubahan ini membuat kode menjadi lebih aman, lebih mudah dipelihara, dan mengurangi kemungkinan kesalahan akibat penggunaan string yang tidak konsisten.
+
+Selain itu, pada bagian service testing saya menggunakan **Mockito** untuk melakukan mocking terhadap dependency `OrderRepository`. Dengan menggunakan anotasi seperti `@Mock` dan `@InjectMocks`, saya dapat menguji perilaku `OrderServiceImpl` secara terisolasi tanpa harus bergantung pada implementasi repository yang sebenarnya. Hal ini sangat membantu dalam memastikan bahwa unit test benar-benar hanya menguji logika pada service layer.
+
+Secara keseluruhan, pendekatan TDD ini cukup membantu dalam proses pengembangan karena memberikan struktur kerja yang jelas. Dengan menulis test terlebih dahulu, saya dapat memahami kebutuhan sistem dengan lebih baik sebelum mengimplementasikan kode. Selain itu, setiap perubahan kode dapat langsung divalidasi menggunakan test yang sudah ada sehingga potensi bug dapat dideteksi lebih awal.
+
+Namun, saya masih perlu meningkatkan kemampuan dalam menulis unit test yang lebih efektif, terutama dalam penggunaan framework seperti Mockito. Dengan memahami teknik mocking lebih dalam, saya dapat membuat test yang lebih terisolasi dan lebih mudah dipelihara di masa depan.
+
+---
+
+## 2. Reflection on the F.I.R.S.T Principles in Unit Testing
+
+Dalam tutorial ini saya membuat beberapa unit test seperti `OrderTest`, `OrderRepositoryTest`, dan `OrderServiceTest` untuk menguji berbagai skenario pada sistem Order. Jika dikaitkan dengan prinsip **F.I.R.S.T (Fast, Independent, Repeatable, Self-validating, Timely)**, sebagian besar test yang dibuat sudah cukup memenuhi prinsip tersebut.
+
+### Fast
+
+Unit test yang dibuat berjalan dengan cepat karena tidak bergantung pada database atau sistem eksternal. Contohnya, pada `OrderServiceTest` saya menggunakan **Mockito** untuk melakukan mocking pada `OrderRepository`. Dengan cara ini, test hanya memverifikasi logika pada `OrderServiceImpl` tanpa harus benar-benar menyimpan data ke database.
+
+### Independent
+
+Setiap test dibuat independen dengan menggunakan method `setup()` untuk menginisialisasi data sebelum test dijalankan. Hal ini memastikan bahwa setiap test tidak bergantung pada hasil test lainnya dan dapat dijalankan secara terpisah tanpa mempengaruhi satu sama lain.
+
+### Repeatable
+
+Karena test tidak bergantung pada kondisi eksternal seperti database atau jaringan, test dapat dijalankan berulang kali dengan hasil yang konsisten. Hal ini mempermudah proses debugging karena hasil test selalu dapat direproduksi.
+
+### Self-validating
+
+Setiap unit test menggunakan assertion seperti `assertEquals`, `assertNull`, `assertTrue`, dan `assertThrows` untuk memverifikasi hasil yang diharapkan. Contohnya pada test `updateStatus`, saya memverifikasi bahwa status order benar-benar berubah menjadi `SUCCESS`, serta memastikan bahwa exception akan dilempar jika status yang diberikan tidak valid.
+
+### Timely
+
+Test ditulis sebelum implementasi kode dilakukan, sesuai dengan prinsip utama TDD. Dengan menulis test terlebih dahulu, saya dapat menentukan perilaku yang diharapkan dari setiap class seperti `Order`, `OrderRepository`, dan `OrderServiceImpl` sebelum menulis implementasi kodenya.
+
+---
+
+## Conclusion
+
+Secara keseluruhan, penerapan Test Driven Development dalam tutorial ini membantu saya memahami bagaimana menulis kode yang lebih terstruktur, teruji, dan mudah dipelihara. Dengan membuat unit test terlebih dahulu, saya dapat memastikan bahwa setiap fitur yang diimplementasikan sudah memenuhi perilaku yang diharapkan.
+
+Penggunaan Mockito juga sangat membantu dalam menguji komponen seperti `OrderServiceImpl` secara terisolasi dari dependency lainnya. Selain itu, refactoring menggunakan enum `OrderStatus` membuat kode menjadi lebih aman dan lebih mudah dipahami.
+
+Ke depannya, saya ingin meningkatkan kualitas unit test yang saya buat dengan menambahkan lebih banyak skenario pengujian serta memperdalam penggunaan mocking dan testing framework agar proses pengembangan perangkat lunak menjadi lebih efektif dan lebih robust.
