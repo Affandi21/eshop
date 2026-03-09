@@ -18,7 +18,7 @@ class PaymentControllerTest {
     private MockMvc mockMvc;
 
     @Test
-    void testPaymentDetailPage() throws Exception {
+    void testPaymentDetailPage(){
 
         mockMvc.perform(get("/payment/detail"))
                 .andExpect(status().isOk());
