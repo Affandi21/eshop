@@ -21,4 +21,10 @@ public class Payment {
         this.paymentData = paymentData;
     }
 
+    public void setStatus(String status){
+        this.status = status;
+    }
+
+
+
 }

@@ -63,4 +63,8 @@ public class OrderRepository {
 
         return result;
     }
+
+    public List<Order> findAll() {
+        return orderData;
+    }
 }

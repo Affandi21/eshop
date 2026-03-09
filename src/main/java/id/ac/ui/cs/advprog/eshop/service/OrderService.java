@@ -12,4 +12,6 @@ public interface OrderService {
     Order findById(String orderId);
 
     List<Order> findAllByAuthor(String author);
+
+    List<Order> findAll();
 }
