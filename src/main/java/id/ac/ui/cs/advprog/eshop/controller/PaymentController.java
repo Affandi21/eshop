@@ -29,14 +29,4 @@ public class PaymentController {
         return "paymentDetail";
     }
 
-    @GetMapping("/payment/admin/list")
-    public String paymentList(Model model) {
-
-        List<Payment> payments = paymentService.getAllPayments();
-
-        model.addAttribute("payments", payments);
-
-        return "paymentAdminList";
-    }
-
 }

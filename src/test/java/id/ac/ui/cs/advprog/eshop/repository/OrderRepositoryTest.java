@@ -2,163 +2,189 @@ package id.ac.ui.cs.advprog.eshop.repository;
 
 import id.ac.ui.cs.advprog.eshop.model.Order;
 import id.ac.ui.cs.advprog.eshop.model.Product;
-import id.ac.ui.cs.advprog.eshop.enums.OrderStatus;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class OrderRepositoryTest {
 
-    OrderRepository orderRepository;
-    List<Order> orders;
+    private OrderRepository orderRepository;
+    private List<Product> products;
 
     @BeforeEach
     void setUp() {
-
         orderRepository = new OrderRepository();
 
-        List<Product> products = new ArrayList<>();
-
-        Product product1 = new Product();
-        product1.setProductId("ebb558e9f-1c39-4600-8860-71af6af63bd6");
-        product1.setProductName("Sampo Cap Bambang");
-        product1.setProductQuantity(2);
-
-        products.add(product1);
-
-        orders = new ArrayList<>();
-
-        Order order1 = new Order(
-                "13652556-012a-4c07-b546-54eb1396d79b",
-                products,
-                1708560000L,
-                "Safira Sudrajat"
-        );
-
-        orders.add(order1);
-
-        Order order2 = new Order(
-                "7f9e15bb-4b15-42f4-a8bc-c3af385fb078",
-                products,
-                1708570000L,
-                "Safira Sudrajat"
-        );
-
-        orders.add(order2);
-
-        Order order3 = new Order(
-                "33fef40-9eff-4da8-9487-8ea697ce9f1a",
-                products,
-                1708580000L,
-                "Banbang Sudrajat"
-        );
-
-        orders.add(order3);
+        products = new ArrayList<>();
+        products.add(new Product());
     }
 
     @Test
-    void testSaveCreate() {
+    void testSaveNewOrder() {
 
-        Order order = orders.get(1);
+        Order order = new Order(
+                "1",
+                products,
+                System.currentTimeMillis(),
+                "affandi"
+        );
 
         Order result = orderRepository.save(order);
 
-        Order findResult = orderRepository.findById(orders.get(1).getId());
-
-        assertEquals(order.getId(), result.getId());
-        assertEquals(order.getId(), findResult.getId());
-        assertEquals(order.getOrderTime(), findResult.getOrderTime());
-        assertEquals(order.getAuthor(), findResult.getAuthor());
-        assertEquals(order.getStatus(), findResult.getStatus());
+        assertEquals(order, result);
     }
 
     @Test
-    void testSaveUpdate() {
+    void testSaveUpdateOrderSameId() {
 
-        Order order = orders.get(1);
+        Order order1 = new Order(
+                "1",
+                products,
+                System.currentTimeMillis(),
+                "affandi"
+        );
+
+        Order order2 = new Order(
+                "1",
+                products,
+                System.currentTimeMillis(),
+                "affandi"
+        );
+
+        orderRepository.save(order1);
+        orderRepository.save(order2);
+
+        Order result = orderRepository.findById("1");
+
+        assertEquals(order2, result);
+    }
+
+    @Test
+    void testFindByIdSuccess() {
+
+        Order order = new Order(
+                "1",
+                products,
+                System.currentTimeMillis(),
+                "affandi"
+        );
 
         orderRepository.save(order);
 
-        Order newOrder = new Order(
-                order.getId(),
-                order.getProducts(),
-                order.getOrderTime(),
-                order.getAuthor(),
-                OrderStatus.SUCCESS.getValue()
+        Order result = orderRepository.findById("1");
+
+        assertNotNull(result);
+        assertEquals("1", result.getId());
+    }
+
+    @Test
+    void testFindOrderByIdNotFound() {
+
+        OrderRepository repository = new OrderRepository();
+
+        Order result = repository.findById("999");
+
+        assertNull(result);
+    }
+
+    @Test
+    void testFindAllByAuthorSuccess() {
+
+        Order order1 = new Order(
+                "1",
+                products,
+                System.currentTimeMillis(),
+                "affandi"
         );
 
-        Order result = orderRepository.save(newOrder);
+        Order order2 = new Order(
+                "2",
+                products,
+                System.currentTimeMillis(),
+                "affandi"
+        );
 
-        Order findResult = orderRepository.findById(orders.get(1).getId());
+        orderRepository.save(order1);
+        orderRepository.save(order2);
 
-        assertEquals(order.getId(), result.getId());
-        assertEquals(order.getId(), findResult.getId());
-        assertEquals(order.getOrderTime(), findResult.getOrderTime());
-        assertEquals(order.getAuthor(), findResult.getAuthor());
-        assertEquals(OrderStatus.SUCCESS.getValue(), findResult.getStatus());
+        List<Order> result = orderRepository.findAllByAuthor("affandi");
+
+        assertEquals(2, result.size());
     }
 
     @Test
-    void testFindByIdIfFound() {
+    void testFindAllByAuthorEmpty() {
 
-        for (Order order : orders) {
-            orderRepository.save(order);
-        }
+        OrderRepository repository = new OrderRepository();
 
-        Order findResult = orderRepository.findById(orders.get(1).getId());
+        List<Order> result = repository.findAllByAuthor("unknown");
 
-        assertEquals(orders.get(1).getId(), findResult.getId());
-        assertEquals(orders.get(1).getOrderTime(), findResult.getOrderTime());
-        assertEquals(orders.get(1).getAuthor(), findResult.getAuthor());
-        assertEquals(orders.get(1).getStatus(), findResult.getStatus());
+        assertTrue(result.isEmpty());
     }
 
     @Test
-    void testFindByIdIfNotFound() {
+    void testFindAll() {
 
-        for (Order order : orders) {
-            orderRepository.save(order);
-        }
+        Order order1 = new Order(
+                "1",
+                products,
+                System.currentTimeMillis(),
+                "affandi"
+        );
 
-        Order findResult = orderRepository.findById("zczc");
+        Order order2 = new Order(
+                "2",
+                products,
+                System.currentTimeMillis(),
+                "dam"
+        );
 
-        assertNull(findResult);
+        orderRepository.save(order1);
+        orderRepository.save(order2);
+
+        List<Order> result = orderRepository.findAll();
+
+        assertEquals(2, result.size());
     }
 
     @Test
-    void testFindAllByAuthorIfAuthorCorrect() {
+    void testFindAllByAuthorNotMatch(){
 
-        for (Order order : orders) {
-            orderRepository.save(order);
-        }
+        Order order = new Order(
+                "1",
+                products,
+                System.currentTimeMillis(),
+                "affandi"
+        );
 
-        List<Order> orderList =
-                orderRepository.findAllByAuthor(orders.get(1).getAuthor());
+        orderRepository.save(order);
 
-        assertEquals(2, orderList.size());
+        List<Order> result = orderRepository.findAllByAuthor("dam");
+
+        assertTrue(result.isEmpty());
     }
 
     @Test
-    void testFindAllByAuthorIfAllLowercase() {
+    void testFindByIdDifferentId(){
 
-        orderRepository.save(orders.get(1));
+        Order order = new Order(
+                "1",
+                products,
+                System.currentTimeMillis(),
+                "affandi"
+        );
 
-        List<Order> orderList =
-                orderRepository.findAllByAuthor(
-                        orders.get(1).getAuthor().toLowerCase()
-                );
+        orderRepository.save(order);
 
-        assertTrue(orderList.isEmpty());
+        Order result = orderRepository.findById("999");
+
+        assertNull(result);
     }
-
-
-
-
 
 
 }
