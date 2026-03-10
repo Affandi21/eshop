@@ -82,6 +82,17 @@ class CarServiceImplTest {
     }
 
     @Test
+    void testCreateWithExistingId() {
+        Car car = new Car();
+        car.setCarId("existing-id");
+        car.setCarName("Toyota");
+
+        Car result = carService.create(car);
+
+        assertEquals("existing-id", result.getCarId());
+    }
+
+    @Test
     void testFindByIdNotFound() {
         assertNull(carService.findById("not-exist"));
     }
