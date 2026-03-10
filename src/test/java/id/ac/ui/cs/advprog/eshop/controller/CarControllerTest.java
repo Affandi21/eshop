@@ -36,10 +36,10 @@ class CarControllerTest {
     void testCreateCarPost() {
         Car car = new Car();
 
-        String view = controller.createCarPost(car, model);
+        String view = controller.createCarPost(car);
 
         verify(carService).create(car);
-        assertEquals("redirect:listCar", view);
+        assertEquals("redirect:/car/listCar", view);
     }
 
     @Test
@@ -53,7 +53,7 @@ class CarControllerTest {
     }
 
     @Test
-    void testEditCarPage() {
+    void testEditCarPageFound() {
         Car car = new Car();
         when(carService.findById("1")).thenReturn(car);
 
@@ -64,14 +64,24 @@ class CarControllerTest {
     }
 
     @Test
+    void testEditCarPageNotFound() {
+        when(carService.findById("1")).thenReturn(null);
+
+        String view = controller.editCarPage("1", model);
+
+        assertEquals("redirect:/car/listCar", view);
+        verify(model, never()).addAttribute(eq("car"), any());
+    }
+
+    @Test
     void testEditCarPost() {
         Car car = new Car();
         car.setCarId("1");
 
-        String view = controller.editCarPost(car, model);
+        String view = controller.editCarPost(car);
 
         verify(carService).update("1", car);
-        assertEquals("redirect:listCar", view);
+        assertEquals("redirect:/car/listCar", view);
     }
 
     @Test
@@ -79,6 +89,6 @@ class CarControllerTest {
         String view = controller.deleteCar("1");
 
         verify(carService).deleteCarById("1");
-        assertEquals("redirect:listCar", view);
+        assertEquals("redirect:/car/listCar", view);
     }
 }
